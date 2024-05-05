@@ -1,15 +1,20 @@
+// RealTimeAnalytics.jsx
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
-function RealTimeAnalytics() {
+const RealTimeAnalytics = () => {
   const [analytics, setAnalytics] = useState([]);
 
   useEffect(() => {
-    const socket = io('/analytics');
-    socket.on('update', (data) => {
-      setAnalytics(data);
+    const socket = io.connect('/analytics');
+
+    socket.on('update', (newData) => {
+      setAnalytics(prevAnalytics => [...prevAnalytics, newData]);
     });
-    return () => socket.disconnect();
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   return (
